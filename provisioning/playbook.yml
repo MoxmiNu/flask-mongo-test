@@ -1,0 +1,44 @@
+---
+
+- name: install some stuff
+  hosts: all
+  remote_user: vagrant
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: install epel-release
+    yum: name=epel-release state=present
+  - name: install python-pip
+    yum: name=python-pip state=present
+  - name: install vim
+    yum: name=vim state=present
+  - name: disable selinux
+    selinux: state=disabled
+  - name: create mongodb dir
+    file: path=/data/db mode=0755 state=directory 
+  - name: chown data db dir vagratn
+    file: path=/data owner=vagrant group=vagrant recurse=yes
+  - name: extract mongodb to opt
+    unarchive: src=files/mongodb-linux-x86_64-rhel70-3.2.4.tgz dest=/opt/
+  - name: clean up tmp
+    shell: rm -f /tmp/mongodb-linux-x86_64-rhel70-3.2.4.tgz
+  - name: link mongodb in opt
+    file:  src=/opt/mongodb-linux-x86_64-rhel70-3.2.4 dest=/opt/mongodb state=link
+  - name: add mongodb bin to vagrant users path
+    lineinfile: dest=/home/vagrant/.bash_profile state=present regexp="PATH=" line='PATH=$PATH:$HOME/.local/bin:$HOME/bin:/opt/mongodb/bin'
+  - name: add mongodb bin to root users path
+    lineinfile: dest=/root/.bash_profile state=present regexp="PATH=" line='PATH=$PATH:$HOME/bin:/opt/mongodb/bin'
+  - name: add systemd init file
+    copy: src=files/mongod.service dest=/etc/systemd/system/
+  - name: enable start mongod
+    service: name=mongod enabled=yes state=started
+  - name: pip install flask
+    pip: name=flask
+  - name: pip install pymongo
+    pip: name=pymongo
+  - name: copy flask app
+    copy: src=files/dr-app.py dest=/home/vagrant mode=0755
+  - name: copy flask systemd file
+    copy: src=files/flask.service dest=/etc/systemd/system
+  - name: enable start flask app
+    service: name=flask enabled=yes state=started

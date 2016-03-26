@@ -1,0 +1,12 @@
+[Unit]
+Description=High-performance, schema-free document-oriented database
+
+[Service]
+User=vagrant
+Group=vagrant
+Environment="OPTIONS=--quiet"
+ExecStart=/opt/mongodb/bin/mongod $OPTIONS run
+PIDFile=/var/run/mongodb/mongod.pid
+
+[Install]
+WantedBy=multi-user.target

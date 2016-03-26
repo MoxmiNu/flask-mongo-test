@@ -1,0 +1,12 @@
+[Unit]
+Description=Flask App to write json data to mongodb
+
+[Service]
+User=vagrant
+Group=vagrant
+ExecStart=/bin/python /home/vagrant/dr-app.py
+PIDFile=/home/vagrant/dr-app.pid
+
+[Install]
+WantedBy=multi-user.target
+
