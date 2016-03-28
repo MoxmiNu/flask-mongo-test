@@ -8,20 +8,24 @@ Steps to provision and test test flask app
 
   cd into cloned dir
 
- `vagrant up --provider virtualbox`
+ `vagrant up`
 
+Run the postjson.sh script to post data into flask app
 
-> ./postjson.sh folks.json 
+ `./postjson.sh folks.json` 
 
 output should resemble:
+
 >  Records not entered for:
 >  Jane Doe
 
 
 run the get.sh script with 2 arguments:
+
  `./get.sh "John Doe" 2015-05-12`
 
 output should resemble:
+
 > John Doe was seen 2015-05-12 on 4 occurances 
 
 
