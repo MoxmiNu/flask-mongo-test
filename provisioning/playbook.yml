@@ -14,24 +14,14 @@
     yum: name=vim state=present
   - name: disable selinux
     selinux: state=disabled
-  - name: create mongodb dir
-    file: path=/data/db mode=0755 state=directory 
-  - name: chown data db dir vagratn
-    file: path=/data owner=vagrant group=vagrant recurse=yes
-  - name: extract mongodb to opt
-    unarchive: src=files/mongodb-linux-x86_64-rhel70-3.2.4.tgz dest=/opt/
-  - name: clean up tmp
-    shell: rm -f /tmp/mongodb-linux-x86_64-rhel70-3.2.4.tgz
-  - name: link mongodb in opt
-    file:  src=/opt/mongodb-linux-x86_64-rhel70-3.2.4 dest=/opt/mongodb state=link
-  - name: add mongodb bin to vagrant users path
-    lineinfile: dest=/home/vagrant/.bash_profile state=present regexp="PATH=" line='PATH=$PATH:$HOME/.local/bin:$HOME/bin:/opt/mongodb/bin'
-  - name: add mongodb bin to root users path
-    lineinfile: dest=/root/.bash_profile state=present regexp="PATH=" line='PATH=$PATH:$HOME/bin:/opt/mongodb/bin'
-  - name: add systemd init file
-    copy: src=files/mongod.service dest=/etc/systemd/system/
+  - name: import mongo rpm pub key
+    shell: sudo rpm --import https://www.mongodb.org/static/pgp/server-3.2.asc
+  - name: configure mongo yum repo
+    copy: src=files/mongo.repo dest=/etc/yum.repos.d/
+  - name: install mongodb server
+    yum: name=mongodb-org state=present
   - name: enable start mongod
-    service: name=mongod enabled=yes state=started
+    service: name=mongod enabled=yes state=restarted
   - name: pip install flask
     pip: name=flask
   - name: pip install pymongo

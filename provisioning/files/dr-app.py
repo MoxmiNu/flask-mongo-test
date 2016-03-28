@@ -26,7 +26,16 @@ def api_message():
             name += "\n" + failed
    
    
-    return "Records not entered for:%s " % name + "\n"
+    return "Records not entered for:{}\n".format(name)
+
+
+@app.route('/user', methods = ['GET'])
+def api_query(name="", date=""):
+    name = dict()
+    name = request.args.get('name')
+    date = request.args.get('date')
+
+    return "name was {} and date was {} \n".format(name, date)
 
 
 if __name__ == '__main__':
