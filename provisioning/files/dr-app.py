@@ -31,11 +31,17 @@ def api_message():
 
 @app.route('/user', methods = ['GET'])
 def api_query(name="", date=""):
+    client = MongoClient('localhost', 27017)
+    db = client.folksdb
+    posts = db.posts
     name = dict()
     name = request.args.get('name')
     date = request.args.get('date')
+    results = list(posts.find( {'name': name, 'date': { '$regex': date } }))
+    cnt=""
+    cnt = len(results)
 
-    return "name was {} and date was {} \n".format(name, date)
+    return "{} was seen {} on {} occurances \n".format(name, date, cnt)
 
 
 if __name__ == '__main__':
